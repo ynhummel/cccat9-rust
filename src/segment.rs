@@ -10,11 +10,8 @@ pub struct Segment {
 }
 
 impl Segment {
-    pub fn new(distance: u32, y: i32, m: u32, d: u32, hour: u32, min: u32, sec: u32) -> Self {
-        Self {
-            distance,
-            date: Utc.with_ymd_and_hms(y, m, d, hour, min, sec).unwrap(),
-        }
+    pub fn new(distance: u32, date: DateTime<Utc>) -> Self {
+        Self { distance, date }
     }
 
     pub fn distance(&self) -> u32 {

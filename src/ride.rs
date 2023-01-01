@@ -1,4 +1,5 @@
 use crate::segment::Segment;
+use chrono::prelude::*;
 
 const NORMAL_FARE: f64 = 2.1;
 const OVERNIGHT_FARE: f64 = 3.9;
@@ -24,7 +25,8 @@ impl Ride {
         }
     }
 
-    pub fn add_segment(&mut self, segment: Segment) {
+    pub fn add_segment(&mut self, distance: u32, date: DateTime<Utc>) {
+        let segment = Segment::new(distance, date);
         self.segments.push(segment)
     }
 
