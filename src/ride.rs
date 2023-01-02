@@ -1,4 +1,4 @@
-use crate::fare_calculator::*;
+use crate::fare_calculator_factory;
 use crate::segment::Segment;
 use chrono::prelude::*;
 
@@ -30,34 +30,11 @@ impl Ride {
         let mut fare: f64 = 0.0;
 
         for segment in &self.segments {
-            if segment.is_special_day() {
-                let fare_calculator = special_day_fare_calculator::SpecialDayFareCalculator::new();
-                fare += fare_calculator.calculate(segment);
-                continue;
-            }
-            if segment.is_overnight() && !segment.is_sunday() {
-                let fare_calculator = overnight_fare_calculator::OvernightFareCalculator::new();
-                fare += fare_calculator.calculate(segment);
-                continue;
-            }
-            if segment.is_overnight() && segment.is_sunday() {
-                let fare_calculator =
-                    overnight_sunday_fare_calculator::OvernightSundayFareCalculator::new();
-                fare += fare_calculator.calculate(segment);
-                continue;
-            }
-            if !segment.is_overnight() && segment.is_sunday() {
-                let fare_calculator = sunday_fare_calculator::SundayFareCalculator::new();
-                fare += fare_calculator.calculate(segment);
-                continue;
-            }
-
-            if !segment.is_overnight() && !segment.is_sunday() {
-                let fare_calculator = normal_fare_calculator::NormalFareCalculator::new();
-                fare += fare_calculator.calculate(segment);
-                continue;
-            }
+            let fare_calculator =
+                fare_calculator_factory::FareCalculatorFactory::create(segment).unwrap();
+            fare += fare_calculator.calculate(segment);
         }
+
         let fare_comp = (fare * 10.0).trunc() as u32;
         let min_comp = (MIN_FARE * 10.0).trunc() as u32;
         if fare_comp > min_comp {
