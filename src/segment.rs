@@ -18,10 +18,6 @@ impl Segment {
         self.distance
     }
 
-    pub fn date(&self) -> DateTime<Utc> {
-        self.date
-    }
-
     pub fn is_special_day(&self) -> bool {
         self.date.day() == SPECIAL_DAY
     }

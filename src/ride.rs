@@ -1,11 +1,7 @@
+use crate::fare_calculator::*;
 use crate::segment::Segment;
 use chrono::prelude::*;
 
-const NORMAL_FARE: f64 = 2.1;
-const OVERNIGHT_FARE: f64 = 3.9;
-const SUNDAY_FARE: f64 = 2.9;
-const OVERNIGHT_SUNDAY_FARE: f64 = 5.0;
-const FIRST_DAY_FARE: f64 = 1.5;
 const MIN_FARE: f64 = 10.0;
 
 pub struct Ride {
@@ -35,24 +31,30 @@ impl Ride {
 
         for segment in &self.segments {
             if segment.is_special_day() {
-                fare += segment.distance() as f64 * FIRST_DAY_FARE;
+                let fare_calculator = special_day_fare_calculator::SpecialDayFareCalculator::new();
+                fare += fare_calculator.calculate(segment);
                 continue;
             }
             if segment.is_overnight() && !segment.is_sunday() {
-                fare += segment.distance() as f64 * OVERNIGHT_FARE;
+                let fare_calculator = overnight_fare_calculator::OvernightFareCalculator::new();
+                fare += fare_calculator.calculate(segment);
                 continue;
             }
             if segment.is_overnight() && segment.is_sunday() {
-                fare += segment.distance() as f64 * OVERNIGHT_SUNDAY_FARE;
+                let fare_calculator =
+                    overnight_sunday_fare_calculator::OvernightSundayFareCalculator::new();
+                fare += fare_calculator.calculate(segment);
                 continue;
             }
             if !segment.is_overnight() && segment.is_sunday() {
-                fare += segment.distance() as f64 * SUNDAY_FARE;
+                let fare_calculator = sunday_fare_calculator::SundayFareCalculator::new();
+                fare += fare_calculator.calculate(segment);
                 continue;
             }
 
             if !segment.is_overnight() && !segment.is_sunday() {
-                fare += segment.distance() as f64 * NORMAL_FARE;
+                let fare_calculator = normal_fare_calculator::NormalFareCalculator::new();
+                fare += fare_calculator.calculate(segment);
                 continue;
             }
         }
