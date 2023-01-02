@@ -34,13 +34,16 @@ impl Ride {
                 fare_calculator_factory::FareCalculatorFactory::create(segment).unwrap();
             fare += fare_calculator.calculate(segment);
         }
+        fare_or_min(fare)
+    }
+}
 
-        let fare_comp = (fare * 10.0).trunc() as u32;
-        let min_comp = (MIN_FARE * 10.0).trunc() as u32;
-        if fare_comp > min_comp {
-            fare
-        } else {
-            MIN_FARE
-        }
+fn fare_or_min(fare: f64) -> f64 {
+    let fare_comp = (fare * 10.0).trunc() as u32;
+    let min_comp = (MIN_FARE * 10.0).trunc() as u32;
+    if fare_comp > min_comp {
+        fare
+    } else {
+        MIN_FARE
     }
 }
